@@ -1,0 +1,30 @@
+Description: Puppeteer AWS Lambda Layer 
+Parameters:
+  AllowedPrincipal:
+    Type: String
+    Description: Account principal allowed to deploy this layer
+    Default: '*'
+
+Resources:
+  LambdaLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs8.10
+      Description: Puppeteer for AWS Lambda
+      LayerName: puppeteer
+      LicenseInfo: Apache-2.0
+      Content:
+        S3Bucket: DEPLOYMENT_BUCKET_NAME
+        S3Key: DEPLOYMENT_KEY
+
+  DeploymentPermission:
+    Type: "AWS::Lambda::LayerVersionPermission"
+    Properties:
+      Action: lambda:GetLayerVersion
+      LayerVersionArn: !Ref LambdaLayer
+      Principal: !Ref AllowedPrincipal
+
+Outputs:
+  LambdaLayer: 
+    Value: !Ref LambdaLayer
